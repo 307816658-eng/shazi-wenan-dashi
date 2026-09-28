@@ -1,0 +1,80 @@
+{
+  "at": "2026-09-28T06:11:54.266Z",
+  "checks": [
+    {
+      "name": "core.js 没有 require Node 内置模块",
+      "pass": true,
+      "detail": "无"
+    },
+    {
+      "name": "llm.js 没有 require Node 内置模块",
+      "pass": true,
+      "detail": "无"
+    },
+    {
+      "name": "prompts.js 没有 require Node 内置模块",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "taxonomy.js 没有 require Node 内置模块",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "/api/options 返回结构正确",
+      "pass": true,
+      "detail": "status=200 steps=6"
+    },
+    {
+      "name": "/api/health 返回 configured=true",
+      "pass": true,
+      "detail": "model=agnes-3.0-flash runtime=node"
+    },
+    {
+      "name": "/api/health 不泄露密钥",
+      "pass": true,
+      "detail": "响应体干净"
+    },
+    {
+      "name": "配置缺失时不报错、只标记未配置",
+      "pass": true,
+      "detail": "missing=API_KEY,API_URL,MODEL_NAME"
+    },
+    {
+      "name": "配置缺失时生成接口返回友好提示而非崩溃",
+      "pass": true,
+      "detail": "{\"message\":\"AI 服务还没配置好，请联系管理员检查接口配置。\",\"kind\":\"config\",\"missing\":[\"API_KEY\",\"API_URL\",\"MODEL_NAME\"]}"
+    },
+    {
+      "name": "二次操作缺上一版内容时返回 400 且不调 AI",
+      "pass": true,
+      "detail": "{\"message\":\"上一版内容丢了，点一下「重新填写」再来一次吧。\",\"kind\":\"input\"}"
+    },
+    {
+      "name": "经 core 真实生成成功",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "返回体里没有密钥",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "functions/api/generate.js 是薄包装（导出 handler + import core）",
+      "pass": true,
+      "detail": "export=true importCore=true 行数=50"
+    },
+    {
+      "name": "functions/api/options.js 是薄包装（导出 handler + import core）",
+      "pass": true,
+      "detail": "export=true importCore=true 行数=19"
+    },
+    {
+      "name": "functions/api/health.js 是薄包装（导出 handler + import core）",
+      "pass": true,
+      "detail": "export=true importCore=true 行数=20"
+    }
+  ]
+}

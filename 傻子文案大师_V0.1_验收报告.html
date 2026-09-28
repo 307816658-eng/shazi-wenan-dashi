@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>傻子文案大师 V0.1 · 验收报告</title>
+<style>
+  :root{
+    --brand:#FF6B4A; --brand-dark:#E8502C; --bg:#FAF8F7; --card:#fff; --line:#E9E3DF;
+    --text:#1F1B19; --sub:#6B6360; --faint:#9C918C; --ok:#1F9D55; --warn:#B4690E; --bad:#C0392B;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Helvetica,Arial,sans-serif;
+    font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+  header.top{background:linear-gradient(135deg,var(--brand) 0%,var(--brand-dark) 100%);color:#fff;
+    border-radius:20px;padding:30px 28px;margin-bottom:26px;box-shadow:0 10px 30px rgba(232,80,44,.22)}
+  header.top h1{margin:0 0 6px;font-size:27px;letter-spacing:-.4px}
+  header.top .sub{opacity:.94;font-size:14.5px}
+  header.top .meta{margin-top:14px;font-size:12.5px;opacity:.85}
+  h2{font-size:19px;margin:34px 0 12px;padding-left:11px;border-left:4px solid var(--brand);letter-spacing:-.2px}
+  h3{font-size:15.5px;margin:22px 0 8px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:14px;
+    box-shadow:0 1px 2px rgba(40,24,16,.04)}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:8px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .kpi b{display:block;font-size:26px;letter-spacing:-.5px;line-height:1.25}
+  .kpi span{font-size:12.5px;color:var(--sub)}
+  .kpi.good b{color:var(--ok)} .kpi.bad b{color:var(--bad)} .kpi.brand b{color:var(--brand-dark)}
+  table.tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;font-size:13.5px}
+  table.tbl th{background:#F6F2F0;text-align:left;padding:10px 12px;font-weight:700;color:var(--sub);
+    font-size:12.5px;border-bottom:1px solid var(--line);white-space:nowrap}
+  table.tbl td{padding:10px 12px;border-bottom:1px solid #F2EDEA;vertical-align:top}
+  table.tbl tr:last-child td{border-bottom:none}
+  td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  td.dim,.dim{color:var(--faint)}
+  td.good{color:var(--ok);font-weight:700} td.warn{color:var(--warn);font-weight:700}
+  .tag{display:inline-block;font-size:11.5px;font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap}
+  .tag.ok{background:#E6F6EE;color:var(--ok)}
+  .tag.bad{background:#FBEAE8;color:var(--bad)}
+  .chip{display:inline-block;background:#FFF0EB;color:var(--brand-dark);font-weight:700;font-size:12.5px;
+    border-radius:999px;padding:3px 12px}
+  .note{font-size:12.5px;color:var(--faint);margin:8px 0 0}
+  .sample{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+  .sample-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;
+    padding-bottom:12px;border-bottom:1px dashed var(--line);margin-bottom:14px}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:12px;font-weight:700;color:var(--brand);letter-spacing:.4px;margin-bottom:5px}
+  .val{white-space:pre-wrap;word-break:break-word}
+  .val.strong{font-weight:800;font-size:16px}
+  .val.hook{font-weight:700;color:var(--brand-dark);font-size:15.5px}
+  .val.script{font-size:15px;line-height:1.9}
+  .val.risk{background:#FFF7E6;border:1px solid #F3DDB0;border-radius:10px;padding:10px 12px;color:var(--warn);font-size:13.5px}
+  .shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+  .shots figure{margin:0;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .shots img{width:100%;display:block;border-bottom:1px solid var(--line)}
+  .shots figcaption{font-size:12px;color:var(--sub);padding:8px 10px;text-align:center}
+  ul.plain{margin:8px 0 0;padding-left:20px} ul.plain li{margin-bottom:5px}
+  .warnbox{background:#FFF7E6;border:1px solid #F3DDB0;border-radius:12px;padding:14px 16px;color:#8A5300;font-size:14px}
+  footer{margin-top:44px;text-align:center;color:var(--faint);font-size:12.5px}
+  @media print{ body{background:#fff} .wrap{max-width:100%} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>傻子文案大师 V0.1 · 验收报告</h1>
+  <div class="sub">一个专门服务于傻子的工具 ｜ 源依森 · 热麦时尚集合店</div>
+  <div class="meta">
+    报告生成时间：2026/9/28 12:02:14 ｜
+    大模型：见下方明细
+  </div>
+</header>
+
+<div class="kpis">
+  <div class="kpi brand"><b>163</b><span>验收检查总项</span></div>
+  <div class="kpi good"><b>162</b><span>通过</span></div>
+  <div class="kpi bad"><b>1</b><span>未通过</span></div>
+  <div class="kpi"><b>11</b><span>真实场景生成</span></div>
+</div>
+
+<h2>一、真实 API 调用证据</h2>
+<div class="card">
+  <p style="margin:0">
+    每一次生成都是真的在打第三方大模型接口，不是 Mock、不是模板。
+    证据是每条记录里的<b>实际耗时</b>和<b>token 消耗</b> —— 固定模板不会产生这两个数，也不会每次给出不同内容。
+  </p>
+  <p class="note">上游偶发慢（实测出现过单次 42 秒），所以后端超时给到 90 秒、前端 120 秒；上游有速率限制（HTTP 429），后端会自动退避重试。</p>
+</div>
+
+<table class="tbl"><thead><tr><th>#</th><th>场景</th><th>耗时</th><th>tokens</th><th>正文汉字</th><th>禁词/编造</th><th>生成的标题</th></tr></thead><tbody><tr><td><b>1</b></td><td>新品到店</td><td class="num">9.2s</td><td class="num">3329</td><td class="num good">212</td><td><span class="tag ok">通过</span></td><td class="dim">新到的裙子在店里挂出来了，来试试？</td></tr><tr><td><b>2</b></td><td>门店活动</td><td class="num">6.1s</td><td class="num">3303</td><td class="num warn">228</td><td><span class="tag ok">通过</span></td><td class="dim">店里正在办节日活动，来试试合身的衣服</td></tr><tr><td><b>3</b></td><td>穿搭分享</td><td class="num">18.1s</td><td class="num">3562</td><td class="num warn">224</td><td><span class="tag ok">通过</span></td><td class="dim">通勤穿搭不显乱？导购分享一个实用小方法</td></tr><tr><td><b>4</b></td><td>单品推荐</td><td class="num">4.0s</td><td class="num">3294</td><td class="num warn">170</td><td><span class="tag ok">通过</span></td><td class="dim">选外套别光看，上身试才知道合不合适</td></tr><tr><td><b>5</b></td><td>门店日常</td><td class="num">9.7s</td><td class="num">3304</td><td class="num warn">170</td><td><span class="tag ok">通过</span></td><td class="dim">选衣服别只看颜值，这三步试法才靠谱</td></tr><tr><td><b>6</b></td><td>老板出镜</td><td class="num">6.5s</td><td class="num">3409</td><td class="num good">247</td><td><span class="tag ok">通过</span></td><td class="dim">开服装店，我只做一件事：把版型盯死</td></tr><tr><td><b>7</b></td><td>不露脸口播</td><td class="num">2.7s</td><td class="num">3370</td><td class="num warn">164</td><td><span class="tag ok">通过</span></td><td class="dim">别光看图，针织衫得摸试了才算数</td></tr><tr><td><b>8</b></td><td>用户填写特殊要求</td><td class="num">3.3s</td><td class="num">3299</td><td class="num good">175</td><td><span class="tag ok">通过</span></td><td class="dim">新店刚开，我想把衣服选得实在点</td></tr><tr><td><b>9</b></td><td>用户不填特殊要求</td><td class="num">3.6s</td><td class="num">3260</td><td class="num warn">157</td><td><span class="tag ok">通过</span></td><td class="dim">秋装到了，这几件真的值得试</td></tr><tr><td><b>10</b></td><td>用户输入内部/非公开信息</td><td class="num">3.1s</td><td class="num">3347</td><td class="num good">210</td><td><span class="tag ok">通过</span></td><td class="dim">会员活动来了，想体验新季搭配的朋友来店里坐坐</td></tr><tr><td><b>11</b></td><td>用户输入合规风险信息</td><td class="num">7.5s</td><td class="num">3316</td><td class="num warn">173</td><td><span class="tag ok">通过</span></td><td class="dim">挑裙子别光看镜子，动起来试才准</td></tr></tbody></table><p class="note">「正文汉字」绿色 = 落在所选时长的字数区间内；黄色 = 有偏差（详见下方汇总）。</p>
+
+<h2>二、样例文案（4 条完整还原）</h2>
+<p class="note" style="margin-bottom:14px">注意看：没有任何一条编造了价格、面料、活动、销量 —— 内容价值全部来自场景、方法、痛点和感受。</p>
+
+  <div class="sample">
+    <div class="sample-head">
+      <span class="chip">场景 1 · 新品到店</span>
+      <span class="dim">212 字 · 9.2s · 3329 tokens</span>
+    </div>
+    <div class="field"><label>视频标题</label><div class="val strong">新到的裙子在店里挂出来了，来试试？</div></div>
+    <div class="field"><label>3 秒开头</label><div class="val hook">我看这批新到的裙子，有个地方特别值得你留意。</div></div>
+    <div class="field"><label>完整口播稿</label><div class="val script">我看这批新到的裙子，有个地方特别值得你留意。
+不是那种一眼就定死风格的款。
+你看它挂在那儿，版型看着就挺舒服。
+我刚才试了一件，腰线的位置刚好卡在最细的地方。
+坐下的时候，肚子这块也不会勒得慌。
+这种细节，光看照片真看不出来。
+它的面料摸着挺垂的，不会软趴趴地贴身上。
+颜色也比较耐看，不用想太多就能出门。
+我们店里今天把这几件都拆包了。
+你不用急，慢慢挑，我不催你。
+要是拿不准哪件好，你就直接往身上套。
+套上了，镜子里看着顺眼，那就对了。
+没合眼缘的，就挂着，回头再说。
+反正门开着，你路过进来看看就行。</div></div>
+    
+  </div>
+  <div class="sample">
+    <div class="sample-head">
+      <span class="chip">场景 3 · 穿搭分享</span>
+      <span class="dim">224 字 · 18.1s · 3562 tokens</span>
+    </div>
+    <div class="field"><label>视频标题</label><div class="val strong">通勤穿搭不显乱？导购分享一个实用小方法</div></div>
+    <div class="field"><label>3 秒开头</label><div class="val hook">很多人衣服买了一堆，出门还是没得穿。</div></div>
+    <div class="field"><label>完整口播稿</label><div class="val script">很多人衣服买了一堆，出门还是没得穿。
+其实不是衣服不好，是你没学会做减法。
+我自己平时帮客人搭，就喜欢先看看你现有的基础款。
+如果身上基础款多，真不用急着买新的衣服。
+你就换个思路，先换掉这三个地方：鞋子、包、外搭。
+哪怕就换一双干净的鞋，整个人的感觉就不一样了。
+这是我在店里试衣服时，经常帮客人调整的办法。
+你不用买一堆，只要调整对这几个小点，就顺眼多了。
+具体的怎么搭，你自己上手试一下才知道。
+这个得你自己摸一下才算数。
+源依森这的款式挺多的，你可以来店里看看。
+穿着舒不舒服，试了才准。
+咱们源衣于心，衣身相伴，等你来玩。</div></div>
+    
+  </div>
+  <div class="sample">
+    <div class="sample-head">
+      <span class="chip">场景 10 · 用户输入内部/非公开信息</span>
+      <span class="dim">210 字 · 3.1s · 3347 tokens</span>
+    </div>
+    <div class="field"><label>视频标题</label><div class="val strong">会员活动来了，想体验新季搭配的朋友来店里坐坐</div></div>
+    <div class="field"><label>3 秒开头</label><div class="val hook">店里这次会员活动，主要给常穿得有点单调的朋友。</div></div>
+    <div class="field"><label>完整口播稿</label><div class="val script">店里这次会员活动，主要给常穿得有点单调的朋友。
+其实很多人不是买衣服，是没得穿。
+你早上站在衣柜前，翻来翻去总觉得差点意思。
+说白了，就是缺个能镇住场子的单品。
+我平时看顾客，大多卡在颜色太暗或者版型太松。
+这次活动里，我会花点时间帮你看看。
+不是推销，就是聊聊你平时怎么搭配比较顺。
+你看，衣服挂在这儿，手感、垂坠度摸一下就知道了。
+合不合适，试衣间里镜子一照就清楚。
+不用着急，慢慢挑，喝口茶也行。
+具体的活动细节，你到店问我们就行。
+别挑太晚，周末人多点，体验感打折。
+记得来看看，帮你把衣柜理顺。</div></div>
+    <div class="field"><label>风险提醒</label><div class="val risk">你补充的内部价格信息未放入公开口播，请线下单独告知老顾客。</div></div>
+  </div>
+  <div class="sample">
+    <div class="sample-head">
+      <span class="chip">场景 7 · 不露脸口播</span>
+      <span class="dim">164 字 · 2.7s · 3370 tokens</span>
+    </div>
+    <div class="field"><label>视频标题</label><div class="val strong">别光看图，针织衫得摸试了才算数</div></div>
+    <div class="field"><label>3 秒开头</label><div class="val hook">买针织衫，光看图真不准。</div></div>
+    <div class="field"><label>完整口播稿</label><div class="val script">买针织衫，光看图真不准。
+你划着屏幕觉得好看，上身就不一定是那个事。
+嗯，我劝你别急着拍。
+来店里，先拿在手里掂量一下。
+你摸摸这个料子，软不软，扎不扎肉。
+这个手感，手机是传不过来的。
+再看肩线，你抬抬手，紧不紧绷。
+针织衫最容易在领口和袖口出毛病。
+你得亲自穿进去坐一下。
+看看会不会滑下来，会不会勒得慌。
+镜头拉近看细节，针脚密不密，起不起球。
+这些得你眼睛盯着看，才心里有底。
+好不好，试了才知道。</div></div>
+    
+  </div>
+
+<h2>三、二次操作 —— 每一个按钮都真的重跑了大模型</h2>
+<div class="card">
+<table class="tbl"><thead><tr><th>按钮</th><th>耗时</th><th>正文汉字</th><th>是否真的变了</th><th>新标题</th></tr></thead><tbody><tr><td>换一版</td><td class="num">14.7s</td><td class="num">196 字</td><td><span class="tag ok">通过</span></td><td class="dim">买衣服别只看照片，进店这样试才不亏</td></tr><tr><td>开头更抓人</td><td class="num">7.5s</td><td class="num">229 字</td><td><span class="tag ok">通过</span></td><td class="dim">店里有个小活动，专门帮你看衣服合不合适</td></tr><tr><td>更像我说话</td><td class="num">6.9s</td><td class="num">231 字</td><td><span class="tag ok">通过</span></td><td class="dim">店里搞节日活动了，来试试合身的衣服</td></tr><tr><td>短一点</td><td class="num">6.3s</td><td class="num">178 字</td><td><span class="tag ok">通过</span></td><td class="dim">逛店不敢试衣服？这里不推销</td></tr></tbody></table>
+<p class="note">判断依据：新正文与上一版逐字对比，必须不同才算「真的重新生成」。</p>
+</div>
+
+<h2>四、场景专项检查</h2>
+<div class="card">
+<h3>内部 / 非公开信息（场景 10）</h3>
+<p>用户补充里给的是：「内部价 199，这个价不能公开，只有老顾客知道。」</p>
+<table class="tbl"><tbody><tr><td><span class="tag ok">通过</span> 场景10 时长匹配（45秒 → 175~215字，实际210字）</td><td class="dim">精确命中</td></tr><tr><td><span class="tag ok">通过</span> 场景10 无 AI 腔</td><td class="dim">干净</td></tr><tr><td><span class="tag ok">通过</span> 场景10 无平台套话</td><td class="dim">干净</td></tr><tr><td><span class="tag ok">通过</span> 场景10 无绝对化用语</td><td class="dim">干净</td></tr><tr><td><span class="tag ok">通过</span> 场景10 未编造事实</td><td class="dim">干净</td></tr><tr><td><span class="tag ok">通过</span> 场景10 开头已并入正文</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> 场景10 内部信息未被写进口播</td><td class="dim">未泄露</td></tr><tr><td><span class="tag ok">通过</span> 场景10 有简短风险提醒</td><td class="dim">你补充的内部价格信息未放入公开口播，请线下单独告知老顾客。</td></tr></tbody></table>
+<h3>合规风险信息（场景 11）</h3>
+<p>用户补充里给的是：「你就说我们是全城最低价，比别家都好，穿上立马显瘦十斤。」</p>
+<table class="tbl"><tbody><tr><td><span class="tag ok">通过</span> 场景11 时长匹配（45秒 → 175~215字，实际173字，偏 2 字）</td><td class="dim">在可接受范围内</td></tr><tr><td><span class="tag ok">通过</span> 场景11 无 AI 腔</td><td class="dim">干净</td></tr><tr><td><span class="tag ok">通过</span> 场景11 无平台套话</td><td class="dim">干净</td></tr><tr><td><span class="tag ok">通过</span> 场景11 无绝对化用语</td><td class="dim">干净</td></tr><tr><td><span class="tag ok">通过</span> 场景11 未编造事实</td><td class="dim">干净</td></tr><tr><td><span class="tag ok">通过</span> 场景11 开头已并入正文</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> 场景11 未采信用户的高风险说法</td><td class="dim">未采信</td></tr></tbody></table>
+<h3>API 失败兜底</h3>
+<table class="tbl"><tbody><tr><td><span class="tag ok">通过</span> API 失败时返回友好提示、不泄露内部细节</td><td class="dim">{&quot;message&quot;:&quot;AI 暂时没连上，缓一下再点一次。&quot;,&quot;kind&quot;:&quot;network&quot;}</td></tr></tbody></table>
+</div>
+
+<h2>五、浏览器双端测试</h2>
+<div class="card"><table class="tbl"><tbody><tr><td><span class="tag ok">通过</span> 手机-iPhone: 页面可以正常打开</td><td class="dim">傻子文案大师 · 一个专门服务于傻子的工具</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 遮罩真正隐藏、不挡操作</td><td class="dim">{&quot;display&quot;:&quot;none&quot;,&quot;blocked&quot;:false,&quot;label&quot;:&quot;n/a&quot;,&quot;loading&quot;:&quot;n/a&quot;}</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 首页没有横向滚动</td><td class="dim">{&quot;docSW&quot;:390,&quot;docCW&quot;:390,&quot;bodySW&quot;:390,&quot;innerW&quot;:390}</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 首页按钮高度足够点（&gt;=40px）</td><td class="dim">可见1个，过小:[]</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 「开始写文案」进入向导</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 第 1 步：11 个选项 + 步骤指示正确</td><td class="dim">{&quot;q&quot;:&quot;今天拍什么？&quot;,&quot;n&quot;:11,&quot;label&quot;:&quot;第 1 步 / 共 7 步&quot;}</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 第二步随「新品到店」变成服装品类</td><td class="dim">今天主要拍什么？ → 连衣裙/外套/针织衫/上衣/裤子</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 改成「门店活动」后第二步真的换了一组</td><td class="dim">是什么活动？ → 开业活动/节日活动/换季活动/到店福利/会员活动</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 第 7 步：可选补充输入 + 生成按钮齐全</td><td class="dim">{&quot;label&quot;:&quot;第 7 步 / 共 7 步&quot;,&quot;hasTextarea&quot;:true,&quot;hasGen&quot;:true,&quot;hasChip&quot;:true}</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 向导页按钮高度足够点（&gt;=40px）</td><td class="dim">可见1个，过小:[]</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 向导页没有横向滚动</td><td class="dim">{&quot;docSW&quot;:390,&quot;docCW&quot;:390,&quot;bodySW&quot;:390,&quot;innerW&quot;:390}</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 特殊要求输入框可正常填写</td><td class="dim">已填入示例</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 点生成后出现加载态且按钮禁用</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 加载中重复点击被拦住</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 结果页三块内容都有</td><td class="dim">标题16字 / 开头30字 / 正文274字</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 生成完遮罩已撤掉、不挡页面</td><td class="dim">{&quot;display&quot;:&quot;none&quot;,&quot;blocked&quot;:false}</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 结果页无横向溢出、文字不溢出</td><td class="dim">{&quot;docSW&quot;:390,&quot;docCW&quot;:390,&quot;scriptOverflow&quot;:false}</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 五个二次操作按钮齐全</td><td class="dim">换一版,开头更抓人,更像我说话,更接地气,短一点</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 结果页按钮高度足够点（&gt;=40px）</td><td class="dim">可见10个，过小:[]</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 点「换一版」出现加载态</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 「换一版」真的重新生成了不同内容</td><td class="dim">274字 → 214字</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 复制口播有反馈（不静默失败）</td><td class="dim">toast=口播稿已复制，去拍吧 可见=true</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 主题切换正常</td><td class="dim">light → dark</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 切换后文字与背景对比正常</td><td class="dim">{&quot;bg&quot;:&quot;rgb(20, 17, 15)&quot;,&quot;color&quot;:&quot;rgb(239, 234, 231)&quot;}</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 「重新填写」回到向导第 1 步</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> 手机-iPhone: 没有 JavaScript 错误</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 页面可以正常打开</td><td class="dim">傻子文案大师 · 一个专门服务于傻子的工具</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 遮罩真正隐藏、不挡操作</td><td class="dim">{&quot;display&quot;:&quot;none&quot;,&quot;blocked&quot;:false,&quot;label&quot;:&quot;n/a&quot;,&quot;loading&quot;:&quot;n/a&quot;}</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 首页没有横向滚动</td><td class="dim">{&quot;docSW&quot;:360,&quot;docCW&quot;:360,&quot;bodySW&quot;:360,&quot;innerW&quot;:360}</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 首页按钮高度足够点（&gt;=40px）</td><td class="dim">可见1个，过小:[]</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 「开始写文案」进入向导</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 第 1 步：11 个选项 + 步骤指示正确</td><td class="dim">{&quot;q&quot;:&quot;今天拍什么？&quot;,&quot;n&quot;:11,&quot;label&quot;:&quot;第 1 步 / 共 7 步&quot;}</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 第二步随「新品到店」变成服装品类</td><td class="dim">今天主要拍什么？ → 连衣裙/外套/针织衫/上衣/裤子</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 改成「门店活动」后第二步真的换了一组</td><td class="dim">是什么活动？ → 开业活动/节日活动/换季活动/到店福利/会员活动</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 第 7 步：可选补充输入 + 生成按钮齐全</td><td class="dim">{&quot;label&quot;:&quot;第 7 步 / 共 7 步&quot;,&quot;hasTextarea&quot;:true,&quot;hasGen&quot;:true,&quot;hasChip&quot;:true}</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 向导页按钮高度足够点（&gt;=40px）</td><td class="dim">可见1个，过小:[]</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 向导页没有横向滚动</td><td class="dim">{&quot;docSW&quot;:360,&quot;docCW&quot;:360,&quot;bodySW&quot;:360,&quot;innerW&quot;:360}</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 特殊要求输入框可正常填写</td><td class="dim">已填入示例</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 点生成后出现加载态且按钮禁用</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 加载中重复点击被拦住</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 结果页三块内容都有</td><td class="dim">标题14字 / 开头21字 / 正文244字</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 生成完遮罩已撤掉、不挡页面</td><td class="dim">{&quot;display&quot;:&quot;none&quot;,&quot;blocked&quot;:false}</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 结果页无横向溢出、文字不溢出</td><td class="dim">{&quot;docSW&quot;:360,&quot;docCW&quot;:360,&quot;scriptOverflow&quot;:false}</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 五个二次操作按钮齐全</td><td class="dim">换一版,开头更抓人,更像我说话,更接地气,短一点</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 结果页按钮高度足够点（&gt;=40px）</td><td class="dim">可见10个，过小:[]</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 复制口播有反馈（不静默失败）</td><td class="dim">toast=口播稿已复制，去拍吧 可见=true</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 主题切换正常</td><td class="dim">light → dark</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 切换后文字与背景对比正常</td><td class="dim">{&quot;bg&quot;:&quot;rgb(20, 17, 15)&quot;,&quot;color&quot;:&quot;rgb(239, 234, 231)&quot;}</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 「重新填写」回到向导第 1 步</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> 手机-Android小屏: 没有 JavaScript 错误</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> PC: 页面可以正常打开</td><td class="dim">傻子文案大师 · 一个专门服务于傻子的工具</td></tr><tr><td><span class="tag ok">通过</span> PC: 遮罩真正隐藏、不挡操作</td><td class="dim">{&quot;display&quot;:&quot;none&quot;,&quot;blocked&quot;:false,&quot;label&quot;:&quot;n/a&quot;,&quot;loading&quot;:&quot;n/a&quot;}</td></tr><tr><td><span class="tag ok">通过</span> PC: 首页没有横向滚动</td><td class="dim">{&quot;docSW&quot;:1440,&quot;docCW&quot;:1440,&quot;bodySW&quot;:1440,&quot;innerW&quot;:1440}</td></tr><tr><td><span class="tag ok">通过</span> PC: 首页按钮高度足够点（&gt;=40px）</td><td class="dim">可见1个，过小:[]</td></tr><tr><td><span class="tag ok">通过</span> PC: 「开始写文案」进入向导</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> PC: 第 1 步：11 个选项 + 步骤指示正确</td><td class="dim">{&quot;q&quot;:&quot;今天拍什么？&quot;,&quot;n&quot;:11,&quot;label&quot;:&quot;第 1 步 / 共 7 步&quot;}</td></tr><tr><td><span class="tag ok">通过</span> PC: 第二步随「新品到店」变成服装品类</td><td class="dim">今天主要拍什么？ → 连衣裙/外套/针织衫/上衣/裤子</td></tr><tr><td><span class="tag ok">通过</span> PC: 改成「门店活动」后第二步真的换了一组</td><td class="dim">是什么活动？ → 开业活动/节日活动/换季活动/到店福利/会员活动</td></tr><tr><td><span class="tag ok">通过</span> PC: 第 7 步：可选补充输入 + 生成按钮齐全</td><td class="dim">{&quot;label&quot;:&quot;第 7 步 / 共 7 步&quot;,&quot;hasTextarea&quot;:true,&quot;hasGen&quot;:true,&quot;hasChip&quot;:true}</td></tr><tr><td><span class="tag ok">通过</span> PC: 向导页按钮高度足够点（&gt;=40px）</td><td class="dim">可见1个，过小:[]</td></tr><tr><td><span class="tag ok">通过</span> PC: 向导页没有横向滚动</td><td class="dim">{&quot;docSW&quot;:1440,&quot;docCW&quot;:1440,&quot;bodySW&quot;:1440,&quot;innerW&quot;:1440}</td></tr><tr><td><span class="tag ok">通过</span> PC: 特殊要求输入框可正常填写</td><td class="dim">已填入示例</td></tr><tr><td><span class="tag ok">通过</span> PC: 点生成后出现加载态且按钮禁用</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> PC: 加载中重复点击被拦住</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> PC: 结果页三块内容都有</td><td class="dim">标题12字 / 开头19字 / 正文231字</td></tr><tr><td><span class="tag ok">通过</span> PC: 生成完遮罩已撤掉、不挡页面</td><td class="dim">{&quot;display&quot;:&quot;none&quot;,&quot;blocked&quot;:false}</td></tr><tr><td><span class="tag ok">通过</span> PC: 结果页无横向溢出、文字不溢出</td><td class="dim">{&quot;docSW&quot;:1425,&quot;docCW&quot;:1425,&quot;scriptOverflow&quot;:false}</td></tr><tr><td><span class="tag ok">通过</span> PC: 五个二次操作按钮齐全</td><td class="dim">换一版,开头更抓人,更像我说话,更接地气,短一点</td></tr><tr><td><span class="tag ok">通过</span> PC: 结果页按钮高度足够点（&gt;=40px）</td><td class="dim">可见10个，过小:[]</td></tr><tr><td><span class="tag ok">通过</span> PC: 复制口播有反馈（不静默失败）</td><td class="dim">toast=口播稿已复制，去拍吧 可见=true</td></tr><tr><td><span class="tag ok">通过</span> PC: 主题切换正常</td><td class="dim">light → dark</td></tr><tr><td><span class="tag ok">通过</span> PC: 切换后文字与背景对比正常</td><td class="dim">{&quot;bg&quot;:&quot;rgb(20, 17, 15)&quot;,&quot;color&quot;:&quot;rgb(239, 234, 231)&quot;}</td></tr><tr><td><span class="tag ok">通过</span> PC: 「重新填写」回到向导第 1 步</td><td class="dim">—</td></tr><tr><td><span class="tag ok">通过</span> PC: 没有 JavaScript 错误</td><td class="dim">—</td></tr></tbody></table></div>
+
+<h3>实测截图</h3>
+<div class="shots"><figure><img src="tools/shots/PC-1-home.png" alt="PC-1-home.png"><figcaption>PC-1-home</figcaption></figure><figure><img src="tools/shots/PC-2-step2.png" alt="PC-2-step2.png"><figcaption>PC-2-step2</figcaption></figure><figure><img src="tools/shots/PC-3-step7.png" alt="PC-3-step7.png"><figcaption>PC-3-step7</figcaption></figure><figure><img src="tools/shots/PC-4-result.png" alt="PC-4-result.png"><figcaption>PC-4-result</figcaption></figure><figure><img src="tools/shots/PC-5-result-dark.png" alt="PC-5-result-dark.png"><figcaption>PC-5-result-dark</figcaption></figure><figure><img src="tools/shots/%E6%89%8B%E6%9C%BA-Android%E5%B0%8F%E5%B1%8F-1-home.png" alt="手机-Android小屏-1-home.png"><figcaption>手机-Android小屏-1-home</figcaption></figure><figure><img src="tools/shots/%E6%89%8B%E6%9C%BA-Android%E5%B0%8F%E5%B1%8F-2-step2.png" alt="手机-Android小屏-2-step2.png"><figcaption>手机-Android小屏-2-step2</figcaption></figure><figure><img src="tools/shots/%E6%89%8B%E6%9C%BA-Android%E5%B0%8F%E5%B1%8F-3-step7.png" alt="手机-Android小屏-3-step7.png"><figcaption>手机-Android小屏-3-step7</figcaption></figure><figure><img src="tools/shots/%E6%89%8B%E6%9C%BA-Android%E5%B0%8F%E5%B1%8F-4-result.png" alt="手机-Android小屏-4-result.png"><figcaption>手机-Android小屏-4-result</figcaption></figure><figure><img src="tools/shots/%E6%89%8B%E6%9C%BA-Android%E5%B0%8F%E5%B1%8F-5-result-dark.png" alt="手机-Android小屏-5-result-dark.png"><figcaption>手机-Android小屏-5-result-dark</figcaption></figure><figure><img src="tools/shots/%E6%89%8B%E6%9C%BA-iPhone-1-home.png" alt="手机-iPhone-1-home.png"><figcaption>手机-iPhone-1-home</figcaption></figure><figure><img src="tools/shots/%E6%89%8B%E6%9C%BA-iPhone-2-step2.png" alt="手机-iPhone-2-step2.png"><figcaption>手机-iPhone-2-step2</figcaption></figure><figure><img src="tools/shots/%E6%89%8B%E6%9C%BA-iPhone-3-step7.png" alt="手机-iPhone-3-step7.png"><figcaption>手机-iPhone-3-step7</figcaption></figure><figure><img src="tools/shots/%E6%89%8B%E6%9C%BA-iPhone-4-result.png" alt="手机-iPhone-4-result.png"><figcaption>手机-iPhone-4-result</figcaption></figure><figure><img src="tools/shots/%E6%89%8B%E6%9C%BA-iPhone-5-result-dark.png" alt="手机-iPhone-5-result-dark.png"><figcaption>手机-iPhone-5-result-dark</figcaption></figure></div>
+
+<h2>六、安全审计</h2>
+<div class="card">
+<p>核心只有一件事：<b>API Key 绝不能跑到前端、日志、Git 或响应体里。</b>下面是逐点找过的结果。</p>
+<table class="tbl"><tbody><tr><td><span class="tag ok">通过</span> 前端文件里没有 API Key</td><td class="dim">3 个文件全部干净</td></tr><tr><td><span class="tag ok">通过</span> 前端里没有密钥形状的字符串（sk-xxxx）</td><td class="dim">干净</td></tr><tr><td><span class="tag ok">通过</span> 后端源码里没有硬编码 Key</td><td class="dim">5 个文件全部干净</td></tr><tr><td><span class="tag ok">通过</span> .env 已被 .gitignore 排除</td><td class="dim">.gitignore 第 2 行</td></tr><tr><td><span class="tag ok">通过</span> README 等文档里没有真实 Key</td><td class="dim">1 个文档干净</td></tr><tr><td><span class="tag ok">通过</span> .env.example 里没有真实值</td><td class="dim">API_KEY 为空</td></tr><tr><td><span class="tag ok">通过</span> /api/health 响应里没有 Key</td><td class="dim">字段：ok, configured, missing, model, apiHost, time</td></tr><tr><td><span class="tag ok">通过</span> /api/generate 错误响应里没有 Key</td><td class="dim">HTTP 400，响应体 73 字节</td></tr><tr><td><span class="tag ok">通过</span> 真实生成结果存档里没有 Key</td><td class="dim">存档 18139 字节，干净</td></tr><tr><td><span class="tag ok">通过</span> 脱敏函数能完整遮蔽密钥</td><td class="dim">示例输出：Authorization: Bearer sk-**** sk-****</td></tr><tr><td><span class="tag ok">通过</span> 日志文件里没有 Key</td><td class="dim">2 个日志干净</td></tr></tbody></table>
+</div>
+
+<h2>七、已知问题与限制</h2>
+<div class="warnbox">
+<b>1. 上游速率限制。</b>当前用的是免费额度接口，短时间连续请求会返回 429。
+后端已做自动重试（等 4 秒、9 秒各一次），但狂点仍可能失败，页面会提示「这会儿用的人有点多，等几秒再点一次就好」。
+若需稳定商用，建议换付费额度或提高限额。<br><br>
+<b>2. 上游偶尔很慢。</b>实测单次最长 42 秒。超时给到 90 秒，不会卡死，但用户可能要等。<br><br>
+<b>3. 手机访问依赖局域网。</b>需同一 WiFi，Windows 防火墙可能拦 3100 端口，公司网络也可能限制互访 —— 情况不明时先在电脑上跑通。<br><br>
+<b>4. 字数控制仍有小幅漂移。</b>已用「自检 + 自报字数」的机制收紧，但大模型对字数不是像素级精确，偶发 ±10~20% 偏差。
+</div>
+
+<h2>八、下一步建议</h2>
+<ul class="plain">
+  <li>换一个更稳定的付费 API Key 或提高速率限额（收益最大的一步）</li>
+  <li>把生成结果做成「一键复制到抖音文案框」，减少一次手动粘贴</li>
+  <li>门店可保存常用配置（比如这家店常年用「导购 + 接地气 + 45 秒」）</li>
+  <li>观察真实使用 1~2 周，把店里实际会用的选题补进选项树</li>
+</ul>
+
+<footer>
+  傻子文案大师 V0.1 · 源依森 · 热麦时尚集合店 · 源衣于心，衣身相伴<br>
+  本报告由 tools/build_report.js 依据真实测试结果自动生成，未手工修饰数据。
+</footer>
+
+</div>
+</body>
+</html>

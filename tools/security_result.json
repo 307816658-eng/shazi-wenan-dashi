@@ -1,0 +1,66 @@
+{
+  "at": "2026-09-28T04:02:13.685Z",
+  "keyLoaded": true,
+  "summary": {
+    "total": 11,
+    "pass": 11,
+    "fail": 0
+  },
+  "checks": [
+    {
+      "name": "前端文件里没有 API Key",
+      "pass": true,
+      "detail": "3 个文件全部干净"
+    },
+    {
+      "name": "前端里没有密钥形状的字符串（sk-xxxx）",
+      "pass": true,
+      "detail": "干净"
+    },
+    {
+      "name": "后端源码里没有硬编码 Key",
+      "pass": true,
+      "detail": "5 个文件全部干净"
+    },
+    {
+      "name": ".env 已被 .gitignore 排除",
+      "pass": true,
+      "detail": ".gitignore 第 2 行"
+    },
+    {
+      "name": "README 等文档里没有真实 Key",
+      "pass": true,
+      "detail": "1 个文档干净"
+    },
+    {
+      "name": ".env.example 里没有真实值",
+      "pass": true,
+      "detail": "API_KEY 为空"
+    },
+    {
+      "name": "/api/health 响应里没有 Key",
+      "pass": true,
+      "detail": "字段：ok, configured, missing, model, apiHost, time"
+    },
+    {
+      "name": "/api/generate 错误响应里没有 Key",
+      "pass": true,
+      "detail": "HTTP 400，响应体 73 字节"
+    },
+    {
+      "name": "真实生成结果存档里没有 Key",
+      "pass": true,
+      "detail": "存档 18139 字节，干净"
+    },
+    {
+      "name": "脱敏函数能完整遮蔽密钥",
+      "pass": true,
+      "detail": "示例输出：Authorization: Bearer sk-**** sk-****"
+    },
+    {
+      "name": "日志文件里没有 Key",
+      "pass": true,
+      "detail": "2 个日志干净"
+    }
+  ]
+}

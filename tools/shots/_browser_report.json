@@ -1,0 +1,376 @@
+{
+  "env": {},
+  "checks": [
+    {
+      "name": "手机-iPhone: 页面可以正常打开",
+      "pass": true,
+      "detail": "傻子文案大师 · 一个专门服务于傻子的工具"
+    },
+    {
+      "name": "手机-iPhone: 遮罩真正隐藏、不挡操作",
+      "pass": true,
+      "detail": "{\"display\":\"none\",\"blocked\":false,\"label\":\"n/a\",\"loading\":\"n/a\"}"
+    },
+    {
+      "name": "手机-iPhone: 首页没有横向滚动",
+      "pass": true,
+      "detail": "{\"docSW\":390,\"docCW\":390,\"bodySW\":390,\"innerW\":390}"
+    },
+    {
+      "name": "手机-iPhone: 首页按钮高度足够点（>=40px）",
+      "pass": true,
+      "detail": "可见1个，过小:[]"
+    },
+    {
+      "name": "手机-iPhone: 「开始写文案」进入向导",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "手机-iPhone: 第 1 步：11 个选项 + 步骤指示正确",
+      "pass": true,
+      "detail": "{\"q\":\"今天拍什么？\",\"n\":11,\"label\":\"第 1 步 / 共 7 步\"}"
+    },
+    {
+      "name": "手机-iPhone: 第二步随「新品到店」变成服装品类",
+      "pass": true,
+      "detail": "今天主要拍什么？ → 连衣裙/外套/针织衫/上衣/裤子"
+    },
+    {
+      "name": "手机-iPhone: 改成「门店活动」后第二步真的换了一组",
+      "pass": true,
+      "detail": "是什么活动？ → 开业活动/节日活动/换季活动/到店福利/会员活动"
+    },
+    {
+      "name": "手机-iPhone: 第 7 步：可选补充输入 + 生成按钮齐全",
+      "pass": true,
+      "detail": "{\"label\":\"第 7 步 / 共 7 步\",\"hasTextarea\":true,\"hasGen\":true,\"hasChip\":true}"
+    },
+    {
+      "name": "手机-iPhone: 向导页按钮高度足够点（>=40px）",
+      "pass": true,
+      "detail": "可见1个，过小:[]"
+    },
+    {
+      "name": "手机-iPhone: 向导页没有横向滚动",
+      "pass": true,
+      "detail": "{\"docSW\":390,\"docCW\":390,\"bodySW\":390,\"innerW\":390}"
+    },
+    {
+      "name": "手机-iPhone: 特殊要求输入框可正常填写",
+      "pass": true,
+      "detail": "已填入示例"
+    },
+    {
+      "name": "手机-iPhone: 点生成后出现加载态且按钮禁用",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "手机-iPhone: 加载中重复点击被拦住",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "手机-iPhone: 结果页三块内容都有",
+      "pass": true,
+      "detail": "标题16字 / 开头30字 / 正文274字"
+    },
+    {
+      "name": "手机-iPhone: 生成完遮罩已撤掉、不挡页面",
+      "pass": true,
+      "detail": "{\"display\":\"none\",\"blocked\":false}"
+    },
+    {
+      "name": "手机-iPhone: 结果页无横向溢出、文字不溢出",
+      "pass": true,
+      "detail": "{\"docSW\":390,\"docCW\":390,\"scriptOverflow\":false}"
+    },
+    {
+      "name": "手机-iPhone: 五个二次操作按钮齐全",
+      "pass": true,
+      "detail": "换一版,开头更抓人,更像我说话,更接地气,短一点"
+    },
+    {
+      "name": "手机-iPhone: 结果页按钮高度足够点（>=40px）",
+      "pass": true,
+      "detail": "可见10个，过小:[]"
+    },
+    {
+      "name": "手机-iPhone: 点「换一版」出现加载态",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "手机-iPhone: 「换一版」真的重新生成了不同内容",
+      "pass": true,
+      "detail": "274字 → 214字"
+    },
+    {
+      "name": "手机-iPhone: 复制口播有反馈（不静默失败）",
+      "pass": true,
+      "detail": "toast=口播稿已复制，去拍吧 可见=true"
+    },
+    {
+      "name": "手机-iPhone: 主题切换正常",
+      "pass": true,
+      "detail": "light → dark"
+    },
+    {
+      "name": "手机-iPhone: 切换后文字与背景对比正常",
+      "pass": true,
+      "detail": "{\"bg\":\"rgb(20, 17, 15)\",\"color\":\"rgb(239, 234, 231)\"}"
+    },
+    {
+      "name": "手机-iPhone: 「重新填写」回到向导第 1 步",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "手机-iPhone: 没有 JavaScript 错误",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "手机-Android小屏: 页面可以正常打开",
+      "pass": true,
+      "detail": "傻子文案大师 · 一个专门服务于傻子的工具"
+    },
+    {
+      "name": "手机-Android小屏: 遮罩真正隐藏、不挡操作",
+      "pass": true,
+      "detail": "{\"display\":\"none\",\"blocked\":false,\"label\":\"n/a\",\"loading\":\"n/a\"}"
+    },
+    {
+      "name": "手机-Android小屏: 首页没有横向滚动",
+      "pass": true,
+      "detail": "{\"docSW\":360,\"docCW\":360,\"bodySW\":360,\"innerW\":360}"
+    },
+    {
+      "name": "手机-Android小屏: 首页按钮高度足够点（>=40px）",
+      "pass": true,
+      "detail": "可见1个，过小:[]"
+    },
+    {
+      "name": "手机-Android小屏: 「开始写文案」进入向导",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "手机-Android小屏: 第 1 步：11 个选项 + 步骤指示正确",
+      "pass": true,
+      "detail": "{\"q\":\"今天拍什么？\",\"n\":11,\"label\":\"第 1 步 / 共 7 步\"}"
+    },
+    {
+      "name": "手机-Android小屏: 第二步随「新品到店」变成服装品类",
+      "pass": true,
+      "detail": "今天主要拍什么？ → 连衣裙/外套/针织衫/上衣/裤子"
+    },
+    {
+      "name": "手机-Android小屏: 改成「门店活动」后第二步真的换了一组",
+      "pass": true,
+      "detail": "是什么活动？ → 开业活动/节日活动/换季活动/到店福利/会员活动"
+    },
+    {
+      "name": "手机-Android小屏: 第 7 步：可选补充输入 + 生成按钮齐全",
+      "pass": true,
+      "detail": "{\"label\":\"第 7 步 / 共 7 步\",\"hasTextarea\":true,\"hasGen\":true,\"hasChip\":true}"
+    },
+    {
+      "name": "手机-Android小屏: 向导页按钮高度足够点（>=40px）",
+      "pass": true,
+      "detail": "可见1个，过小:[]"
+    },
+    {
+      "name": "手机-Android小屏: 向导页没有横向滚动",
+      "pass": true,
+      "detail": "{\"docSW\":360,\"docCW\":360,\"bodySW\":360,\"innerW\":360}"
+    },
+    {
+      "name": "手机-Android小屏: 特殊要求输入框可正常填写",
+      "pass": true,
+      "detail": "已填入示例"
+    },
+    {
+      "name": "手机-Android小屏: 点生成后出现加载态且按钮禁用",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "手机-Android小屏: 加载中重复点击被拦住",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "手机-Android小屏: 结果页三块内容都有",
+      "pass": true,
+      "detail": "标题14字 / 开头21字 / 正文244字"
+    },
+    {
+      "name": "手机-Android小屏: 生成完遮罩已撤掉、不挡页面",
+      "pass": true,
+      "detail": "{\"display\":\"none\",\"blocked\":false}"
+    },
+    {
+      "name": "手机-Android小屏: 结果页无横向溢出、文字不溢出",
+      "pass": true,
+      "detail": "{\"docSW\":360,\"docCW\":360,\"scriptOverflow\":false}"
+    },
+    {
+      "name": "手机-Android小屏: 五个二次操作按钮齐全",
+      "pass": true,
+      "detail": "换一版,开头更抓人,更像我说话,更接地气,短一点"
+    },
+    {
+      "name": "手机-Android小屏: 结果页按钮高度足够点（>=40px）",
+      "pass": true,
+      "detail": "可见10个，过小:[]"
+    },
+    {
+      "name": "手机-Android小屏: 复制口播有反馈（不静默失败）",
+      "pass": true,
+      "detail": "toast=口播稿已复制，去拍吧 可见=true"
+    },
+    {
+      "name": "手机-Android小屏: 主题切换正常",
+      "pass": true,
+      "detail": "light → dark"
+    },
+    {
+      "name": "手机-Android小屏: 切换后文字与背景对比正常",
+      "pass": true,
+      "detail": "{\"bg\":\"rgb(20, 17, 15)\",\"color\":\"rgb(239, 234, 231)\"}"
+    },
+    {
+      "name": "手机-Android小屏: 「重新填写」回到向导第 1 步",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "手机-Android小屏: 没有 JavaScript 错误",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "PC: 页面可以正常打开",
+      "pass": true,
+      "detail": "傻子文案大师 · 一个专门服务于傻子的工具"
+    },
+    {
+      "name": "PC: 遮罩真正隐藏、不挡操作",
+      "pass": true,
+      "detail": "{\"display\":\"none\",\"blocked\":false,\"label\":\"n/a\",\"loading\":\"n/a\"}"
+    },
+    {
+      "name": "PC: 首页没有横向滚动",
+      "pass": true,
+      "detail": "{\"docSW\":1440,\"docCW\":1440,\"bodySW\":1440,\"innerW\":1440}"
+    },
+    {
+      "name": "PC: 首页按钮高度足够点（>=40px）",
+      "pass": true,
+      "detail": "可见1个，过小:[]"
+    },
+    {
+      "name": "PC: 「开始写文案」进入向导",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "PC: 第 1 步：11 个选项 + 步骤指示正确",
+      "pass": true,
+      "detail": "{\"q\":\"今天拍什么？\",\"n\":11,\"label\":\"第 1 步 / 共 7 步\"}"
+    },
+    {
+      "name": "PC: 第二步随「新品到店」变成服装品类",
+      "pass": true,
+      "detail": "今天主要拍什么？ → 连衣裙/外套/针织衫/上衣/裤子"
+    },
+    {
+      "name": "PC: 改成「门店活动」后第二步真的换了一组",
+      "pass": true,
+      "detail": "是什么活动？ → 开业活动/节日活动/换季活动/到店福利/会员活动"
+    },
+    {
+      "name": "PC: 第 7 步：可选补充输入 + 生成按钮齐全",
+      "pass": true,
+      "detail": "{\"label\":\"第 7 步 / 共 7 步\",\"hasTextarea\":true,\"hasGen\":true,\"hasChip\":true}"
+    },
+    {
+      "name": "PC: 向导页按钮高度足够点（>=40px）",
+      "pass": true,
+      "detail": "可见1个，过小:[]"
+    },
+    {
+      "name": "PC: 向导页没有横向滚动",
+      "pass": true,
+      "detail": "{\"docSW\":1440,\"docCW\":1440,\"bodySW\":1440,\"innerW\":1440}"
+    },
+    {
+      "name": "PC: 特殊要求输入框可正常填写",
+      "pass": true,
+      "detail": "已填入示例"
+    },
+    {
+      "name": "PC: 点生成后出现加载态且按钮禁用",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "PC: 加载中重复点击被拦住",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "PC: 结果页三块内容都有",
+      "pass": true,
+      "detail": "标题12字 / 开头19字 / 正文231字"
+    },
+    {
+      "name": "PC: 生成完遮罩已撤掉、不挡页面",
+      "pass": true,
+      "detail": "{\"display\":\"none\",\"blocked\":false}"
+    },
+    {
+      "name": "PC: 结果页无横向溢出、文字不溢出",
+      "pass": true,
+      "detail": "{\"docSW\":1425,\"docCW\":1425,\"scriptOverflow\":false}"
+    },
+    {
+      "name": "PC: 五个二次操作按钮齐全",
+      "pass": true,
+      "detail": "换一版,开头更抓人,更像我说话,更接地气,短一点"
+    },
+    {
+      "name": "PC: 结果页按钮高度足够点（>=40px）",
+      "pass": true,
+      "detail": "可见10个，过小:[]"
+    },
+    {
+      "name": "PC: 复制口播有反馈（不静默失败）",
+      "pass": true,
+      "detail": "toast=口播稿已复制，去拍吧 可见=true"
+    },
+    {
+      "name": "PC: 主题切换正常",
+      "pass": true,
+      "detail": "light → dark"
+    },
+    {
+      "name": "PC: 切换后文字与背景对比正常",
+      "pass": true,
+      "detail": "{\"bg\":\"rgb(20, 17, 15)\",\"color\":\"rgb(239, 234, 231)\"}"
+    },
+    {
+      "name": "PC: 「重新填写」回到向导第 1 步",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "PC: 没有 JavaScript 错误",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "shots": []
+}

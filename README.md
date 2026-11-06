@@ -112,12 +112,16 @@ Prompt 里用三件套把这件事焊死：
 
 ```
 shazi-wenan-dashi/
-├── server.js              # 后端：静态托管 + API 安全中转 + 错误处理 + 自动重试
+├── server.js              # 本地后端：静态托管 + HTTP 层（业务转交 core.js）
 ├── lib/
+│   ├── core.js            # ★ 业务核心：本地服务与云端 Functions 共用同一份逻辑
+│   │                      #   刻意不引用任何 Node 内置模块，才能在 Workers 里跑
 │   ├── env.js             # .env 解析、URL 规范化、密钥脱敏
 │   ├── llm.js             # 调大模型 + 四级 JSON 兜底 + 错误分类 + 429 退避重试
 │   ├── taxonomy.js        # ★ 选项树（7 步、第二步动态映射）
 │   └── prompts.js         # ★ Prompt 引擎（这个产品的核心）
+├── functions/api/         # Cloudflare Pages Functions：generate / options / health
+│   │                      #   薄包装层，业务逻辑仍在 lib/core.js
 ├── public/
 │   ├── index.html         # 页面结构（首页 / 向导 / 结果）
 │   ├── style.css          # 样式（PC + 手机响应式，明暗双主题）
@@ -158,7 +162,45 @@ node tools/security_check.js
 
 ---
 
-## 六、已知限制（说清楚，不遮掩）
+## 六、部署到 Cloudflare Pages（配置清单）
+
+仓库：<https://github.com/307816658-eng/shazi-wenan-dashi>
+
+这个项目**同时支持两种运行方式**：本地 `node server.js`（长驻 Node 服务），
+以及 Cloudflare Pages（静态文件 + Pages Functions）。两者共用 `lib/core.js`，产品逻辑不重复。
+
+在 Cloudflare Pages 连接 GitHub 仓库时，按下面填（**都是按项目实际情况核对过的，不要改**）：
+
+| 配置项 | 填什么 | 为什么 |
+|---|---|---|
+| Framework preset | **None** | 原生 HTML/CSS/JS，没有框架 |
+| Build command | **留空** | 项目没有 `package.json`、没有构建步骤，填 `npm run build` 必然失败 |
+| Build output directory | `public` | 静态页面都在这个目录，直接发布，不需要构建 |
+| Root directory | `/`（默认） | `functions/` 必须在仓库根，Pages 才会编译成 Functions |
+| Production branch | `main` | Git 主分支 |
+
+**环境变量**（Settings → Variables and Secrets，敏感项选 Secret）：
+
+| 变量名 | 说明 |
+|---|---|
+| `API_KEY` | 第三方大模型密钥 ← **必须设为 Secret** |
+| `API_URL` | OpenAI 兼容 Base URL |
+| `MODEL_NAME` | 模型名称 |
+
+变量名以代码实际读取的为准，改名会导致线上跑不起来。`PORT` 在云端用不上，不用配。
+
+**密钥链路**：浏览器 → `/api/generate`（Pages Function）→ 第三方大模型。
+前端三个文件里没有任何密钥，`.env` 已被 `.gitignore` 排除、不会随代码上传。
+
+**自动更新**：`git push` 到 `main` 后，Cloudflare 会自动重新构建部署。
+本机已配好 Git 凭据，改完代码直接 `git add . && git commit -m "..." && git push` 即可。
+
+> ⚠️ 上线后要重点实测一次「生成我的文案」：Cloudflare Workers 对单次请求有运行时限制，
+> 而上游模型偶尔会慢到 40 秒以上。本地有 90 秒超时兜底，线上需要实测确认。
+
+---
+
+## 七、已知限制（说清楚，不遮掩）
 
 1. **上游有速率限制。** 用的是 Agnes 免费额度接口，连续快速请求会返回 `429`。
    后端已经做了自动重试（等 4 秒、9 秒各试一次），但**短时间内狂点仍可能失败**，
@@ -178,7 +220,7 @@ node tools/security_check.js
 
 ---
 
-## 七、想改风格？只改一个文件
+## 八、想改风格？只改一个文件
 
 `lib/prompts.js` 是唯一需要动的地方。想换品牌、换行业、调节语气策略，都在这里。
 前端和接口完全不用碰。

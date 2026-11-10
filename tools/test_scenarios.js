@@ -104,25 +104,43 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
  * 上游是免费额度接口，实测连续请求会撞 429 速率限制。
  * 所以每个场景之间主动留出间隔 —— 这不是在掩盖问题，是在适配真实的接口限额。
  */
-const GAP_MS = 6000;
+const GAP_MS = 15000;
 
+/**
+ * 上游免费额度会按时间窗口限流。除了场景间隔，这里再对 429 做退避重试，
+ * 避免把「接口临时限流」误判成「产品功能坏了」。
+ */
 async function callAPI(body) {
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
-  const t0 = Date.now();
-  try {
-    const res = await fetch(BASE + '/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
-      signal: ctrl.signal
-    });
-    const json = await res.json().catch(() => null);
-    return { status: res.status, json, ms: Date.now() - t0 };
-  } catch (e) {
-    return { status: 0, json: null, ms: Date.now() - t0, err: e.name === 'AbortError' ? 'timeout' : e.message };
-  } finally {
-    clearTimeout(timer);
+  const MAX_TRY = 3;
+  for (let attempt = 1; attempt <= MAX_TRY; attempt++) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+    const t0 = Date.now();
+    let res = null, json = null, err = null;
+    try {
+      res = await fetch(BASE + '/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+        signal: ctrl.signal
+      });
+      json = await res.json().catch(() => null);
+    } catch (e) {
+      err = e.name === 'AbortError' ? 'timeout' : e.message;
+    } finally {
+      clearTimeout(timer);
+    }
+    const limited = (res && res.status === 429) || (json && json.error && json.error.kind === 'ratelimit');
+    if (limited && attempt < MAX_TRY) {
+      const wait = 25000 + attempt * 10000;
+      console.log(`    上游限流，等 ${wait / 1000}s 后第 ${attempt + 1} 次尝试`);
+      await sleep(wait);
+      continue;
+    }
+    return {
+      status: res ? res.status : 0, json, err,
+      ms: Date.now() - t0
+    };
   }
 }
 

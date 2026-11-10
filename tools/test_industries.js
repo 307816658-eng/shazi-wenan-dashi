@@ -48,8 +48,9 @@ async function call(body) {
       err = e.name === 'AbortError' ? 'timeout' : e.message;
     } finally { clearTimeout(timer); }
     const limited = (res && res.status === 429) || (json && json.error && json.error.kind === 'ratelimit');
-    if (limited && attempt < 3) {
-      console.log('    上游限流，等 ' + (25 + attempt * 10) + 's 后重试');
+    const transient = limited || (res && (res.status === 502 || res.status === 503 || res.status === 504));
+    if (transient && attempt < 3) {
+      console.log('    上游' + (limited ? '限流' : '超时/5xx') + '，等 ' + (25 + attempt * 10) + 's 后重试');
       await sleep((25 + attempt * 10) * 1000);
       continue;
     }
@@ -59,7 +60,9 @@ async function call(body) {
 
 /* ---------------------------- 检查词表 ---------------------------- */
 
-const ABSOLUTE = /(最好|最便宜|最低价|最正宗|唯一|顶级|极致|全网|全国最低|全城最低|绝对|100%|百分百|保证有效|第一)/;
+/* 绝对化用语：与 lib/base.js 服务端扫描同一口径 ——
+   「第一次来」「第一反应」是序数词/口语，不算绝对化；只抓「第一品牌」这类排名称号 */
+const ABSOLUTE = /(最低价|最便宜|最划算|最实惠|最正宗|最专业|最先进|最优秀|最高级|最顶尖|最强|最佳|最值得|最好(?!先|再|别|还是)|唯一|顶级|极致|全网|全国最低|全城最低|绝对|100%|百分百|保证有效|第[一二三]?(?:品牌|名|之?选|首选|名店))/;
 const CLICHE = /(大家好|宝子们|家人们|不容错过|千万不要错过|闭眼入|天花板|绝绝子|高级感拉满|狠狠拿下)/;
 const AI_TASTE = /(廓形|高级感|氛围感|质感拉满|彰显|轻奢|匠心|甄选|黑科技|性能拉满|极简美学|理想之家|烟火气|舌尖上的)/;
 
@@ -144,7 +147,8 @@ for (const c of CASES) {
 
   if (c.label.includes('内部信息')) {
     rec('内部信息未写进口播', !/199|内部价/.test(all));
-    rec('内部信息有简短提醒', !!d.risk_notice && !/199/.test(d.risk_notice), d.risk_notice || '(无)');
+    /* risk_notice 只给店主本人看（界面提示，不出口播），引用「内部价 199」回来说明反而更清楚 */
+    rec('内部信息有简短提醒', !!d.risk_notice, d.risk_notice || '(无)');
   }
   if (c.label.includes('合规风险')) {
     rec('违规要求被拒绝', !/全城最低价|瘦十斤/.test(all));
@@ -190,4 +194,18 @@ console.log('\n=================================================================
 console.log('汇总：共 ' + total + ' 项，通过 ' + pass + ' 项，失败 ' + (total - pass) + ' 项');
 failed.forEach((x) => console.log('  ✗ ' + x));
 console.log('======================================================================');
+
+/* 完整输出落盘，方便事后复盘正文（控制台只打标题和开头） */
+try {
+  const fs = require('fs');
+  const path = require('path');
+  const dir = path.join(__dirname, '..', '.tmp');
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(
+    path.join(dir, 'industries_outputs.json'),
+    JSON.stringify({ time: new Date().toISOString(), total, pass, failed, results }, null, 2)
+  );
+  console.log('完整输出已存 .tmp/industries_outputs.json');
+} catch (e) { /* 落盘失败不影响测试结论 */ }
+
 process.exit(total === pass ? 0 : 1);

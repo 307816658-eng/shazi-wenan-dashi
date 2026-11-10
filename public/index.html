@@ -49,6 +49,13 @@
     </div>
     <div class="industry-grid" id="industryGrid"></div>
 
+    <!-- V0.3：行业变多以后，首屏只放热门 6 个，其余收在这里展开 -->
+    <button class="industry-more" id="industryMore" type="button" hidden>
+      <span id="industryMoreText">更多行业</span>
+      <span class="industry-more-arrow" id="industryMoreArrow" aria-hidden="true">▾</span>
+    </button>
+    <div class="industry-grid industry-grid-more" id="industryGridMore" hidden></div>
+
     <div class="setup-block" id="subTypeBlock">
       <span class="setup-label">再细分一下 <em>（可不选）</em></span>
       <div class="subtype-row" id="subTypeRow"></div>

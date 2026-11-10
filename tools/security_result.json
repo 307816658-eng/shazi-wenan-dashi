@@ -1,5 +1,5 @@
 {
-  "at": "2026-09-28T04:02:13.685Z",
+  "at": "2026-11-10T06:09:01.839Z",
   "keyLoaded": true,
   "summary": {
     "total": 11,
@@ -20,7 +20,7 @@
     {
       "name": "后端源码里没有硬编码 Key",
       "pass": true,
-      "detail": "5 个文件全部干净"
+      "detail": "25 个文件全部干净"
     },
     {
       "name": ".env 已被 .gitignore 排除",
@@ -30,7 +30,7 @@
     {
       "name": "README 等文档里没有真实 Key",
       "pass": true,
-      "detail": "1 个文档干净"
+      "detail": "2 个文档干净"
     },
     {
       "name": ".env.example 里没有真实值",
@@ -40,7 +40,7 @@
     {
       "name": "/api/health 响应里没有 Key",
       "pass": true,
-      "detail": "字段：ok, configured, missing, model, apiHost, time"
+      "detail": "字段：ok, version, configured, missing, model, industries, apiHost, runtime, time"
     },
     {
       "name": "/api/generate 错误响应里没有 Key",
@@ -50,7 +50,7 @@
     {
       "name": "真实生成结果存档里没有 Key",
       "pass": true,
-      "detail": "存档 18139 字节，干净"
+      "detail": "（本次未产出存档，跳过）"
     },
     {
       "name": "脱敏函数能完整遮蔽密钥",
@@ -60,7 +60,7 @@
     {
       "name": "日志文件里没有 Key",
       "pass": true,
-      "detail": "2 个日志干净"
+      "detail": "7 个日志干净"
     }
   ]
 }

@@ -40,7 +40,8 @@ const state = {
   result: null,
   meta: null,
   loading: false,
-  advanceTimer: null
+  advanceTimer: null,
+  moreOpen: null       // 「更多行业」展开状态：null=跟随当前选择，true/false=用户手动开合过
 };
 
 function blankSelection() {
@@ -81,6 +82,10 @@ const el = {
   homeNote: $('homeNote'),
   // V0.2
   industryGrid: $('industryGrid'),
+  industryGridMore: $('industryGridMore'),
+  industryMore: $('industryMore'),
+  industryMoreText: $('industryMoreText'),
+  industryMoreArrow: $('industryMoreArrow'),
   subTypeRow: $('subTypeRow'),
   subTypeBlock: $('subTypeBlock'),
   storeNameInput: $('storeNameInput'),
@@ -184,18 +189,38 @@ function updateProfileBar() {
   el.profileBtn.hidden = false;
 }
 
+function industryCardHtml(x, cur) {
+  const classes = ['industry-card'];
+  if (x.id === cur) classes.push('is-on');
+  if (x.fallback) classes.push('is-fallback');
+  return '<button class="' + classes.join(' ') + '" type="button" data-industry="' + escapeHtml(x.id) + '">' +
+    '<span class="industry-emoji">' + escapeHtml(x.emoji || '') + '</span>' +
+    '<span class="industry-label">' + escapeHtml(x.label) + '</span>' +
+    '</button>';
+}
+
 function renderIndustries() {
   const cur = state.profile.industry;
-  el.industryGrid.innerHTML = state.industries.map((x) => {
-    const on = x.id === cur ? ' is-on' : '';
-    return '<button class="industry-card' + on + '" type="button" data-industry="' + escapeHtml(x.id) + '">' +
-      '<span class="industry-emoji">' + escapeHtml(x.emoji || '') + '</span>' +
-      '<span class="industry-label">' + escapeHtml(x.label) + '</span>' +
-      '</button>';
-  }).join('');
+  const hot = state.industries.filter((x) => x.hot);
+  const rest = state.industries.filter((x) => !x.hot);
+  // null = 用户还没手动开合过：当前行业在「更多」里就自动展开，否则收起
+  const open = state.moreOpen === null
+    ? rest.some((x) => x.id === cur)
+    : state.moreOpen;
 
-  el.industryGrid.querySelectorAll('.industry-card').forEach((btn) => {
-    btn.addEventListener('click', () => switchIndustry(btn.getAttribute('data-industry')));
+  el.industryGrid.innerHTML = hot.map((x) => industryCardHtml(x, cur)).join('');
+  el.industryGridMore.innerHTML = rest.map((x) => industryCardHtml(x, cur)).join('');
+  el.industryGridMore.hidden = !open;
+
+  el.industryMore.hidden = rest.length === 0;
+  el.industryMore.classList.toggle('is-open', open);
+  el.industryMoreText.textContent = open ? '收起其他行业' : '更多行业（' + rest.length + '）';
+  el.industryMoreArrow.textContent = open ? '▴' : '▾';
+
+  [el.industryGrid, el.industryGridMore].forEach((grid) => {
+    grid.querySelectorAll('.industry-card').forEach((btn) => {
+      btn.addEventListener('click', () => switchIndustry(btn.getAttribute('data-industry')));
+    });
   });
 }
 
@@ -548,6 +573,15 @@ function bindEvents() {
     goHome();
     const card = document.querySelector('.setup-card');
     if (card && card.scrollIntoView) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
+  el.industryMore.addEventListener('click', () => {
+    const wasOpen = !el.industryGridMore.hidden;
+    state.moreOpen = !wasOpen;
+    renderIndustries();
+    // 展开后滚一下，让新增的卡片进视野（手机上尤其需要）
+    if (state.moreOpen && el.industryGridMore.scrollIntoView) {
+      el.industryGridMore.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
   });
   el.storeNameInput.addEventListener('input', () => {
     state.profile.storeName = el.storeNameInput.value.slice(0, 20);

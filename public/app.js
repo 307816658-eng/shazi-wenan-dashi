@@ -1,20 +1,26 @@
 'use strict';
 
 /* ============================================================
-   傻子文案大师 V0.2 全行业版 —— 前端交互
-   这个文件里没有任何密钥，所有 AI 调用都走后端 /api/generate
+   傻子文案大师 V0.4 全行业版 —— 前端交互
+   所有 AI 调用都走 window.SWD（bridge.js），由浏览器直连上游。
+   这一层只负责界面，不碰密钥、不拼请求。
 
-   V0.2 新增：首页选行业 / 业态 / 店名，选一次记住，7 步流程一步不加。
+   V0.2：首页选行业 / 业态 / 店名，选一次记住，7 步流程一步不加。
+   V0.3：17 个行业，热门 6 个 + 「更多行业」展开。
+   V0.4：选项改成本地算（秒开），生成改成浏览器直连，
+         等待过程中的界面文案跟着引擎真实进度走。
    ============================================================ */
 
 const API_OPTIONS = '/api/options';
 const API_GENERATE = '/api/generate';
 const PROFILE_KEY = 'swd-v2-profile';
 
-/** 前端请求超时：上游实测会慢到 40 秒以上，这里给到 120 秒 */
+/** 走后端兜底时的超时（直连不用这个，bridge 里自己管） */
 const TIMEOUT_MS = 120000;
 /** 点选后停留多久再自动进下一步（让用户看见选中态） */
 const AUTO_ADVANCE_MS = 320;
+
+const OVERLAY_SUB_DEFAULT = 'AI 正在想，通常十几秒，偶尔会慢一点';
 
 const ACTION_LOADING = {
   generate: '正在帮你写这条视频…',
@@ -68,6 +74,7 @@ const el = {
   stepActions: $('stepActions'),
   overlay: $('overlay'),
   overlayText: $('overlayText'),
+  overlaySub: $('overlaySub'),
   toast: $('toast'),
   themeToggle: $('themeToggle'),
   restartBtn: $('restartBtn'),
@@ -113,7 +120,13 @@ function toast(msg) {
 
 function showOverlay(text) {
   el.overlayText.textContent = text || ACTION_LOADING.generate;
+  if (el.overlaySub) el.overlaySub.textContent = OVERLAY_SUB_DEFAULT;
   el.overlay.hidden = false;
+}
+/** 刷新遮罩上的大字和小字（小字用来交代「现在在干什么」） */
+function updateOverlay(main, sub) {
+  if (main) el.overlayText.textContent = main;
+  if (el.overlaySub) el.overlaySub.textContent = sub || OVERLAY_SUB_DEFAULT;
 }
 function hideOverlay() {
   el.overlay.hidden = true;
@@ -269,37 +282,53 @@ async function switchIndustry(id) {
 }
 
 async function fetchOptions() {
+  // 选项是纯数据（行业、业态、步骤），lib 已经打进浏览器了，本地算就行 ——
+  // 不联网、不等圈，断网也照样能打开。只有引擎没起来时才去问后端。
+  if (window.SWD && typeof window.SWD.options === 'function') {
+    try {
+      const data = window.SWD.options(state.profile.industry);
+      if (data && Array.isArray(data.steps)) return applyOptions(data);
+    } catch (e) { /* 落到后端 */ }
+  }
+
   try {
     const url = API_OPTIONS + '?industry=' + encodeURIComponent(state.profile.industry);
     const res = await fetchWithTimeout(url, { method: 'GET' }, 15000);
     const data = await res.json();
     if (!data || !data.ok || !Array.isArray(data.steps)) throw new Error('bad options');
-
-    state.steps = data.steps;
-    state.industries = Array.isArray(data.industries) ? data.industries : [];
-    state.subTypes = Array.isArray(data.subTypes) ? data.subTypes : [];
-
-    // 后端可能把非法行业回落到默认，同步回来
-    if (data.industry && data.industry !== state.profile.industry) {
-      state.profile.industry = data.industry;
-      state.profile.subType = '';
-      saveProfile();
-    }
-
-    state.sel.industry = state.profile.industry;
-    state.sel.subType = state.profile.subType;
-    state.sel.storeName = state.profile.storeName;
-    state.sel.duration = data.defaultDuration || '45';
-
-    renderSetup();
-    el.startBtn.disabled = false;
-    return true;
+    return applyOptions(data);
   } catch (e) {
     el.startBtn.disabled = true;
-    el.startBtn.textContent = '服务没起来，刷新一下';
-    toast('没拿到选项，确认服务是不是开着，然后刷新页面。');
+    el.startBtn.textContent = '没加载全，刷新一下';
+    toast('页面没加载全，刷新一下就好。');
     return false;
   }
+}
+
+function applyOptions(data) {
+  state.steps = data.steps;
+  state.industries = Array.isArray(data.industries) ? data.industries : [];
+  state.subTypes = Array.isArray(data.subTypes) ? data.subTypes : [];
+
+  // 引擎可能把非法行业回落到默认，同步回来
+  if (data.industry && data.industry !== state.profile.industry) {
+    state.profile.industry = data.industry;
+    state.profile.subType = '';
+    saveProfile();
+  }
+
+  state.sel.industry = state.profile.industry;
+  state.sel.subType = state.profile.subType;
+  state.sel.storeName = state.profile.storeName;
+  state.sel.duration = data.defaultDuration || '45';
+
+  renderSetup();
+  el.startBtn.disabled = false;
+
+  if (el.homeNote && state.industries.length > 4) {
+    el.homeNote.textContent = '什么店都能用 · 选一次就记住';
+  }
+  return true;
 }
 
 /* ---------------------------- 视图切换 ---------------------------- */
@@ -506,15 +535,10 @@ async function runGenerate(action) {
   if (action !== 'generate') body.previous = state.result;
 
   try {
-    const res = await fetchWithTimeout(API_GENERATE, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    }, TIMEOUT_MS);
+    const data = await callEngine(body, action);
 
-    const data = await res.json().catch(() => null);
-    if (!res.ok || !data || !data.ok) {
-      const msg = (data && data.error && data.error.message) || 'AI 暂时没连上，缓一下再点一次。';
+    if (!data || !data.ok) {
+      const msg = (data && data.error && data.error.message) || '刚才没接上，缓一下再点一次吧。';
       toast(msg);
       return;
     }
@@ -524,12 +548,45 @@ async function runGenerate(action) {
     renderResult();
     goResult();
   } catch (e) {
-    if (e && e.name === 'AbortError') toast('AI 想得有点久，这次先算了，再点一次试试。');
-    else toast('网络好像断了，检查一下再试。');
+    if (e && e.name === 'AbortError') toast('这条想得有点久，先歇一下再点一次吧。');
+    else toast('网好像断了一下，等会儿再点一次。');
   } finally {
     state.loading = false;
     hideOverlay();
     setActionsDisabled(false);
+  }
+}
+
+/**
+ * 调引擎：正常走浏览器直连（bridge.js）。
+ * 只有一种情况退后端 —— 直连在浏览器里压根发不出去（返回 network），
+ * 说明这台机器的网络把请求拦了，那就让 Cloudflare 去发。
+ */
+async function callEngine(body, action) {
+  if (window.SWD && typeof window.SWD.generate === 'function') {
+    const res = await window.SWD.generate(body, (p) => updateOverlay(p.main, p.sub));
+    if (res && !res.ok && res.error && res.error.kind === 'network') {
+      return await postBackend(body);
+    }
+    return res;
+  }
+  return await postBackend(body);
+}
+
+/** 后端转发（保留的旧通道，直连不通时兜底） */
+async function postBackend(body) {
+  try {
+    const res = await fetchWithTimeout(API_GENERATE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    }, TIMEOUT_MS);
+
+    const data = await res.json().catch(() => null);
+    if (!data) return { ok: false, error: { kind: 'format', message: '刚才没接上，缓一下再点一次吧。' } };
+    return data;
+  } catch (e) {
+    return { ok: false, error: { kind: 'network', message: '网好像断了一下，等会儿再点一次。' } };
   }
 }
 
@@ -641,6 +698,11 @@ async function init() {
   bindEvents();
   await fetchOptions();
   goHome();
+
+  // 悄悄把上游的冷启动吃掉：用户点完七步怎么也得二十几秒，那时候模型已经热了
+  if (window.SWD && typeof window.SWD.warmup === 'function') {
+    window.SWD.warmup();
+  }
 }
 
 init();

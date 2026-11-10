@@ -71,6 +71,13 @@ function readBody(req) {
   });
 }
 
+/**
+ * 本地联调开关：设了 DEV_UPSTREAM 就把 config.js 里的上游地址换掉，
+ * 指向本机假上游，用来在没有外网的机器上验证整条链路。
+ * 线上（Cloudflare Pages）不跑这个文件，所以这个开关不会被带出去。
+ */
+const DEV_UPSTREAM = process.env.DEV_UPSTREAM || '';
+
 /** 静态文件：严格限制在 public/ 目录内，防路径穿越 */
 function serveStatic(req, res, urlPath) {
   let rel = decodeURIComponent(urlPath.split('?')[0]);
@@ -92,6 +99,21 @@ function serveStatic(req, res, urlPath) {
       return;
     }
     const ext = path.extname(full).toLowerCase();
+
+    // 本地联调：把前端直连的上游地址换成本机假上游
+    if (DEV_UPSTREAM && safeRel === 'config.js') {
+      const patched = buf.toString('utf8')
+        .replace(/API_URL:\s*'[^']*'/, "API_URL: '" + DEV_UPSTREAM + "'");
+      const pb = Buffer.from(patched, 'utf8');
+      res.writeHead(200, {
+        'Content-Type': MIME[ext] || 'application/octet-stream',
+        'Content-Length': pb.length,
+        'Cache-Control': 'no-store'
+      });
+      res.end(pb);
+      return;
+    }
+
     res.writeHead(200, {
       'Content-Type': MIME[ext] || 'application/octet-stream',
       'Content-Length': buf.length,

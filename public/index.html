@@ -162,12 +162,16 @@
   <div class="overlay-box">
     <div class="spinner big-spinner"></div>
     <p id="overlayText">正在帮你写这条视频…</p>
-    <p class="overlay-sub">AI 正在想，通常十几秒，偶尔会慢一点</p>
+    <p class="overlay-sub" id="overlaySub">AI 正在想，通常十几秒，偶尔会慢一点</p>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
+<!-- 引擎（lib/ 打包产物）→ 直连层 → 界面 -->
+<script src="config.js"></script>
+<script src="lib.bundle.js"></script>
+<script src="bridge.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

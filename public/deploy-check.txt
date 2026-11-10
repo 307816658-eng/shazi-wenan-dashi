@@ -1,2 +1,0 @@
-Cloudflare Pages auto-deploy check - 2026-11-10
-If you can read this file on the public URL, GitHub push -> Cloudflare auto deployment works.

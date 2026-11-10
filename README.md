@@ -195,8 +195,26 @@ node tools/security_check.js
 **自动更新**：`git push` 到 `main` 后，Cloudflare 会自动重新构建部署。
 本机已配好 Git 凭据，改完代码直接 `git add . && git commit -m "..." && git push` 即可。
 
-> ⚠️ 上线后要重点实测一次「生成我的文案」：Cloudflare Workers 对单次请求有运行时限制，
-> 而上游模型偶尔会慢到 40 秒以上。本地有 90 秒超时兜底，线上需要实测确认。
+### ⚠️ 线上实测结论：上游接口对云主机出口 IP 限流
+
+2026-11-10 实测定论（有对照实验）：
+
+| 环境 | 直连 `api.agnes-ai.cn/v1` | 结果 |
+|---|---|---|
+| 本机（公司网络出口） | 最短请求 | **HTTP 200**，14 秒返回 |
+| Cloudflare Workers 内（同一个 Key） | 最短请求 | **HTTP 429**，`error code: 1015`，7 毫秒拒绝，`Retry-After: 474` |
+
+`1015` 是 Cloudflare 的 **IP 级限流**错误码。上游自己套了 Cloudflare，
+对 Workers 共享出口 IP 做了限流 —— 请求根本没进模型。
+**这跟本项目的代码、Key、Cloudflare 配置都无关。**
+
+因此：本地 `node server.js` 生成正常；线上页面、7 步流程、静态资源、
+Functions 接口、自动部署都正常，但点「生成我的文案」会被上游 429 挡住，
+页面会显示「这会儿用的人有点多，等几秒再点一次就好」。
+
+**要在线上稳定生成，需要换一个不对云主机出口限流的 OpenAI 兼容接口**
+（填 `API_KEY` / `API_URL` / `MODEL_NAME` 三个变量即可，代码一行不用改）。
+或联系上游服务商对 Cloudflare 出口放行 / 升级付费额度。
 
 ---
 

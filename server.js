@@ -21,7 +21,7 @@ const os = require('os');
 
 const { loadConfig, maskSecret, ROOT } = require('./lib/env');
 const core = require('./lib/core');
-const prompts = require('./lib/prompts');
+const REG = require('./lib/industries');
 
 const cfg = loadConfig();
 const PORT = cfg.PORT;
@@ -136,9 +136,12 @@ async function routeGenerate(req, res) {
 const server = http.createServer((req, res) => {
   const url = req.url || '/';
 
-  // 选项树：前端渲染向导全靠它
+  // 选项树：按行业下发，前端渲染向导全靠它
   if (url.startsWith('/api/options')) {
-    const r = core.handleOptions();
+    let industry = '';
+    try { industry = new URL(url, 'http://localhost').searchParams.get('industry') || ''; }
+    catch (e) { /* 非法 URL 就当没传 */ }
+    const r = core.handleOptions({ industry });
     sendJSON(res, r.status, r.body);
     return;
   }
@@ -186,7 +189,7 @@ server.listen(PORT, '0.0.0.0', () => {
   const lans = lanAddresses();
   console.log('');
   console.log('==========================================================');
-  console.log('   傻子文案大师  V0.1   —— 一个专门服务于傻子的工具');
+  console.log('   傻子文案大师  V0.2 全行业版  —— 一个专门服务于傻子的工具');
   console.log('==========================================================');
   console.log(`   本机打开：   http://localhost:${PORT}`);
   if (lans.length) {
@@ -195,7 +198,7 @@ server.listen(PORT, '0.0.0.0', () => {
     console.log('   手机打开：   未检测到局域网地址');
   }
   console.log('----------------------------------------------------------');
-  console.log(`   门店：       ${prompts.BRAND}`);
+  console.log(`   适用行业：   ${REG.list().map((x) => x.label).join(' / ')}`);
   if (cfg.configured) {
     console.log(`   大模型：     ${cfg.MODEL_NAME}`);
     console.log(`   接口地址：   ${cfg.API_URL}`);

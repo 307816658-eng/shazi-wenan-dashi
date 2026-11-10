@@ -16,6 +16,8 @@ logs/
 .tmp/
 dist/
 build/
+# 测试脚本每次运行都会重写的结果，不是源码
+tools/*_result.json
 
 # ---- Cloudflare / Wrangler 本地缓存 ----
 .wrangler/

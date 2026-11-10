@@ -1,0 +1,13 @@
+# Pages Functions 配置
+# 只做一件事：开启 Smart Placement，让函数尽量跑在靠近上游 API 的节点，
+# 换一个 Workers 出口 IP，绕开上游对某个 Cloudflare 出口 IP 的 1015 限流。
+#
+# 注意：环境变量（API_KEY / API_URL / MODEL_NAME）刻意不写在这里 ——
+# 密钥不能进 Git，继续由 Cloudflare 项目的环境变量管理。
+
+name = "shazi-wenan-dashi"
+pages_build_output_dir = "./public"
+compatibility_date = "2026-11-10"
+
+[placement]
+mode = "smart"

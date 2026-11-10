@@ -67,6 +67,9 @@
   /** 等太久（>30 秒）才允许说的实话 */
   var SLOW_TEXT = '现在用的人有点多，再等我一下…';
 
+  /** 已经探到“路不通”时，别再说“人有点多”—— 前后对不上 */
+  var SLOW_TEXT_NET = '网络好像有点慢，我再试一下…';
+
   /** 彻底没戏了才说的 */
   var FAIL_TEXT = {
     timeout: '这条想得有点久，先歇一下再点一次吧。',
@@ -74,6 +77,9 @@
     format: '这次出来的内容有点乱，再点一次就好。',
     unknown: '刚才没接上，缓一下再点一次吧。'
   };
+
+  /** 已经探到「请求根本发不出去」时用这句，别让用户以为是 AI 笨 */
+  var NETBLOCK_TEXT = '这条没写出来，网络好像不太顺，换个网络或者过会儿再点一次。';
 
   /** 自检用：界面文案里绝对不能出现的词 */
   var BANNED_UI_WORDS = ['重试', '限速', '频率', '429', '排队', '失败', '错误', '服务器', '超时'];
@@ -191,9 +197,11 @@
 
     paint(phaseBase(), '');
 
-    // 超过 30 秒才承认「人有点多」——在此之前界面一直是具体的活
+    // 超过 30 秒才承认「慢」——在此之前界面一直是具体的活
     slowTimer = setTimeout(function () {
-      if (waitCount === 0) paint(SLOW_TEXT, phaseBase());
+      if (waitCount === 0) {
+        paint(warmState === 'fail' ? SLOW_TEXT_NET : SLOW_TEXT, phaseBase());
+      }
     }, 30000);
 
     // 引擎里每推进一步，界面就跟着换一句真话
@@ -225,15 +233,23 @@
       if (CFG.direct === false) {
         res = await callBackend(payload);
       } else {
-        // 总时长兜底：引擎内部最坏能跑好几分钟，不能真让用户干等
-        var raw = await withDeadline(LIB.handleGenerate(cfg, payload), 150000);
+        // 总时长兜底：引擎内部最坏能跑好几分钟，不能真让用户干等。
+        // 预热已经探到「发不出去」的时候就更早收手，别耗着。
+        var budget = warmState === 'fail' ? 45000 : 150000;
+        var raw = await withDeadline(LIB.handleGenerate(cfg, payload), budget);
         // 引擎返回的是 { status, body }，界面要的是 body
         res = (raw && raw.body) ? raw.body : { ok: false, error: { kind: 'unknown', message: FAIL_TEXT.unknown } };
       }
       return res;
     } catch (e) {
       if (e && e.__deadline) {
-        return { ok: false, error: { kind: 'timeout', message: FAIL_TEXT.timeout } };
+        return {
+          ok: false,
+          error: {
+            kind: 'timeout',
+            message: warmState === 'fail' ? NETBLOCK_TEXT : FAIL_TEXT.timeout
+          }
+        };
       }
       var kind = (e && e.kind) || 'unknown';
       return { ok: false, error: { kind: kind, message: FAIL_TEXT[kind] || FAIL_TEXT.unknown } };
@@ -305,6 +321,14 @@
      --------------------------------------------------------------- */
 
   var warmed = false;
+  /**
+   * 预热顺便当探活：
+   *   'ok'   连着上游
+   *   'fail' 压根发不出去（有些公司网络会拦这类请求）
+   *   'idle' 还没试过 / 试了但用户在忙
+   * 探到 fail 之后，生成不再死等 150 秒，40 秒就收手给用户一句话。
+   */
+  var warmState = 'idle';
 
   async function warmup() {
     if (warmed || CFG.direct === false || !cfg.configured) return;
@@ -314,7 +338,7 @@
     try {
       var ctrl = new AbortController();
       var timer = setTimeout(function () { ctrl.abort(); }, 25000);
-      await fetch(chatEndpoint(cfg.API_URL), {
+      var r = await fetch(chatEndpoint(cfg.API_URL), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -328,8 +352,13 @@
         signal: ctrl.signal
       });
       clearTimeout(timer);
+      // 只要服务器有回应（哪怕是 4xx），就说明路通了
+      warmState = 'ok';
+      return r.status;
     } catch (e) {
-      // 预热失败无所谓，用户真点生成时自己会等
+      // 连不上 / 被拦：记下来，等会儿别让用户干等
+      warmState = 'fail';
+      return null;
     }
   }
 
@@ -351,6 +380,8 @@
     WAIT_TEXT.forEach(function (t) { all.push(t); });
     WAIT_TEXT_LATE.forEach(function (t) { all.push(t); });
     all.push(SLOW_TEXT);
+    all.push(SLOW_TEXT_NET);
+    all.push(NETBLOCK_TEXT);
     Object.keys(FAIL_TEXT).forEach(function (k) { all.push(FAIL_TEXT[k]); });
 
     all.forEach(function (text) {
@@ -370,6 +401,8 @@
     generate: generate,
     warmup: warmup,
     selfCheck: selfCheck,
+    /** 预热探活的结果：idle / ok / fail（排查网络问题时看这个） */
+    netState: function () { return warmState; },
     version: CFG.version || '0.4.0',
     isDirect: CFG.direct !== false,
     ready: cfg.configured

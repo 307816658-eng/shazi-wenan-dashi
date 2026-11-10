@@ -55,6 +55,9 @@ export async function onRequestPost(context) {
     // 换路径：GET /v1/models，看是否也 429（判断是路径限流还是 IP 全封）
     url = base + '/models';
     init = { method: 'GET', headers: { Authorization: 'Bearer ' + key } };
+  } else if (mode === 'socket') {
+    // 走 TCP socket（L4）而非 fetch，出口通道与 HTTP 子请求不同，用于判断能否绕过 IP 封禁
+    return socketProbe(base, key, env.MODEL_NAME);
   }
 
   let status = 0;
@@ -91,6 +94,85 @@ export async function onRequestPost(context) {
     ray: request.headers.get('cf-ray') || '',
     body: bodyText,
     err: errMsg
+  });
+}
+
+/**
+ * 用 cloudflare:sockets 的 TCP 连接发一个 HTTP/1.1 请求。
+ * 目的：L4 出口通道与 fetch 子请求不同，用于判断能否绕过上游对 Workers 出口 IP 的 1015 封禁。
+ */
+async function socketProbe(base, key, model) {
+  let host = '';
+  let path = '';
+  try {
+    const u = new URL(base);
+    host = u.hostname;
+    path = u.pathname.replace(/\/+$/, '') + '/chat/completions';
+  } catch (e) {
+    return json({ ok: false, mode: 'socket', err: 'API_URL 解析失败' }, 500);
+  }
+
+  let mod;
+  try {
+    mod = await import('cloudflare:sockets');
+  } catch (e) {
+    return json({ ok: false, mode: 'socket', err: 'sockets 不可用：' + String((e && e.message) || e) }, 500);
+  }
+
+  const bodyText = JSON.stringify({
+    model,
+    messages: [{ role: 'user', content: '只回两个字：可以' }],
+    max_tokens: 10
+  });
+  const enc = new TextEncoder();
+  const head =
+    'POST ' + path + ' HTTP/1.1\r\n' +
+    'Host: ' + host + '\r\n' +
+    'Content-Type: application/json\r\n' +
+    'Authorization: Bearer ' + key + '\r\n' +
+    'Content-Length: ' + enc.encode(bodyText).length + '\r\n' +
+    'Connection: close\r\n\r\n';
+
+  const t0 = Date.now();
+  let raw = '';
+  let err = '';
+  try {
+    const socket = mod.connect({ hostname: host, port: 443 }, { secureTransport: 'on', allowHalfOpen: false });
+    await socket.opened;
+    const w = socket.writable.getWriter();
+    await w.write(enc.encode(head + bodyText));
+    await w.close();
+
+    const reader = socket.readable.getReader();
+    const dec = new TextDecoder();
+    let total = 0;
+    while (total < 4096) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      raw += dec.decode(value, { stream: true });
+      total += (value && value.length) || 0;
+    }
+    try { socket.close(); } catch (e2) { /* 忽略关闭异常 */ }
+  } catch (e) {
+    err = String((e && e.message) || e);
+  }
+
+  const statusMatch = raw.match(/^HTTP\/1\.[01] (\d{3})/);
+  const status = statusMatch ? Number(statusMatch[1]) : 0;
+  const splitAt = raw.indexOf('\r\n\r\n');
+  const bodyOut = (splitAt >= 0 ? raw.slice(splitAt + 4) : raw).slice(0, 300);
+
+  return json({
+    ok: status >= 200 && status < 300,
+    mode: 'socket',
+    status,
+    ms: Date.now() - t0,
+    method: 'TCP+TLS',
+    host,
+    path,
+    bytes: raw.length,
+    body: bodyOut.split(key).join('sk-****'),
+    err
   });
 }
 
